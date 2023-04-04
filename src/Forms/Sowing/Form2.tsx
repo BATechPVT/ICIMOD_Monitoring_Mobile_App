@@ -1,43 +1,38 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from "react";
-import {
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  TextInput,
-  Alert,
-  BackHandler,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import axios from "axios";
-import Spinner from "react-native-loading-spinner-overlay";
-import { RadioButton } from "react-native-paper";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import Feather from "react-native-vector-icons/Feather";
-import { SelectMultiple } from "../../Components/SelectMultiple";
-import { InteractiveCell } from "../../Components/InteractiveCell";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { SheetHeader } from "../../Components/BottomSheetHeader";
-import PickerComponent from "../../Components/Picker";
+import axios from "axios";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Alert,
+  BackHandler,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
+import Feather from "react-native-vector-icons/Feather";
 import { useUpdateEffect } from "react-use";
-import { BASE_URL } from "../../Config/URLs";
-import { ThemeContext } from "../../../theme/theme-context";
 import { FontSizes } from "../../../theme/FontSizes";
+import { ThemeContext } from "../../../theme/theme-context";
+import { SheetHeader } from "../../Components/BottomSheetHeader";
 import { Button } from "../../Components/Button";
+import { InteractiveCell } from "../../Components/InteractiveCell";
+import PickerComponent from "../../Components/Picker";
+import { SelectMultiple } from "../../Components/SelectMultiple";
+import { BASE_URL } from "../../Config/URLs";
 const { height, width } = Dimensions.get("screen");
 
 const SowingForm2 = ({ navigation, route }) => {

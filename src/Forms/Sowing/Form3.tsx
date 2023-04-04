@@ -1,43 +1,25 @@
+import axios from "axios";
 import React, {
-  useState,
   useEffect,
-  useRef,
-  useMemo,
-  useCallback,
+  useState
 } from "react";
 import {
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  TextInput,
   Alert,
   BackHandler,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import axios from "axios";
 import Spinner from "react-native-loading-spinner-overlay";
-import { RadioButton } from "react-native-paper";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import Feather from "react-native-vector-icons/Feather";
-import { SelectMultiple } from "../../Components/SelectMultiple";
-import { InteractiveCell } from "../../Components/InteractiveCell";
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetModalProvider,
-} from "@gorhom/bottom-sheet";
-import { SheetHeader } from "../../Components/BottomSheetHeader";
-import PickerComponent from "../../Components/Picker";
-import { useUpdateEffect } from "react-use";
-import { BASE_URL } from "../../Config/URLs";
 import { FontSizes } from "../../../theme/FontSizes";
 import { ThemeContext } from "../../../theme/theme-context";
 import { Button } from "../../Components/Button";
+import { BASE_URL } from "../../Config/URLs";
 const { height, width } = Dimensions.get("screen");
 
 const SowingForm3 = ({ navigation, route }) => {

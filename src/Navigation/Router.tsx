@@ -1,26 +1,25 @@
 // In App.js in a new project
 
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import {View, Text} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import DashBoard from './BottomTabs';
-import {getData} from '../Config/localStorage';
-import {userData} from '../Config/Constants';
+import { userData } from '../Config/Constants';
+import { getData } from '../Config/localStorage';
 import LoginScreen from '../Screens/Auth/LoginScreen';
 import RegisterScreen from '../Screens/Auth/RegisterScreen';
 import HomeScreen from '../Screens/DashBoard/Home';
 import AddReportScreen from '../Screens/Reports/AddReports';
 import ReportDashBoard from '../Screens/Reports/Index';
-import ReportDetailScreen from '../Screens/Reports/ReportDetail';
 import MapScreen from '../Screens/Reports/MapView';
+import ReportDetailScreen from '../Screens/Reports/ReportDetail';
 
+import AddIntervention from '../Forms/AddIntervention';
 import ForestForm from '../Forms/Forest';
 import PlantationForm from '../Forms/Plantation';
 import SowingForm1 from '../Forms/Sowing/Form1';
 import SowingForm2 from '../Forms/Sowing/Form2';
 import SowingForm3 from '../Forms/Sowing/Form3';
-import {CameraPage} from '../Screens/Camera/Camera';
+import { CameraPage } from '../Screens/Camera/Camera';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +55,7 @@ function Router() {
         <Stack.Screen name="SowingForm1" component={SowingForm1} />
         <Stack.Screen name="SowingForm2" component={SowingForm2} />
         <Stack.Screen name="SowingForm3" component={SowingForm3} />
+        <Stack.Screen name="AddIntervention" component={AddIntervention} />
       </Stack.Navigator>
     </NavigationContainer>
   );

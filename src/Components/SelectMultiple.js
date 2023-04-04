@@ -1,39 +1,32 @@
 import React, {
-  useState,
-  useEffect,
   useCallback,
-  useRef,
-  useMemo,
+  useState
 } from "react";
 import {
-  View,
-  Text,
-  Image,
   Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
   FlatList,
-  TextInput,
-  Alert,
-  BackHandler,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Foundation from "react-native-vector-icons/Foundation";
-import axios from "axios";
-import Spinner from "react-native-loading-spinner-overlay";
-import { RadioButton } from "react-native-paper";
-import Feather from "react-native-vector-icons/Feather";
-import { useUpdateEffect } from "react-use";
-import { InteractiveCell } from "./InteractiveCell";
-import { ThemeContext } from "../../theme/theme-context";
 import { widthPercentageToDP } from "react-native-responsive-screen";
+import Foundation from "react-native-vector-icons/Foundation";
+import { ThemeContext } from "../../theme/theme-context";
+import { InteractiveCell } from "./InteractiveCell";
 
 const { height, width } = Dimensions.get("screen");
 
 export const SelectMultiple = (props) => {
-  const { data, specieCallback, title, onPressInteractiveCell, errorMessage } =
-    props;
+  const {
+    data,
+    specieCallback,
+    title,
+    onPressInteractiveCell,
+    errorMessage,
+    showControls = true 
+  } = props;
   const { dark, theme, toggle } = React.useContext(ThemeContext);
   const [dataSource, setDataSource] = useState([{ key: 0 }]);
   const ItemSeparatorView = () => {
@@ -103,6 +96,9 @@ export const SelectMultiple = (props) => {
       {errorMessage !== "" && (
         <Text style={{ color: "red", padding: 7 }}>{errorMessage}</Text>
       )}
+      
+      {
+        showControls && 
       <View style={styles.addMinusContainer}>
         <TouchableOpacity
           style={[styles.addMinus, { backgroundColor: theme.primary }]}
@@ -122,6 +118,7 @@ export const SelectMultiple = (props) => {
           <Foundation name="minus" size={25} color="white" />
         </TouchableOpacity>
       </View>
+    }
     </View>
   );
 };

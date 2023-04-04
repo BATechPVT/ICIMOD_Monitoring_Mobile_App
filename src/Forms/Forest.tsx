@@ -1,41 +1,38 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  TextInput,
-  Alert,
-  BackHandler,
-  Dimensions,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import axios from "axios";
-import Spinner from "react-native-loading-spinner-overlay";
-import { BASE_URL } from "../Config/URLs";
-import Geolocation from "@react-native-community/geolocation";
-import Feather from "react-native-vector-icons/Feather";
-import { InteractiveCell } from "../Components/InteractiveCell";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { SheetHeader } from "../Components/BottomSheetHeader";
-import PickerComponent from "../Components/Picker";
+import Geolocation from "@react-native-community/geolocation";
+import axios from "axios";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Alert,
+  BackHandler,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
+import Feather from "react-native-vector-icons/Feather";
 import { useUpdateEffect } from "react-use";
-import { ThemeContext } from "../../theme/theme-context";
 import { FontSizes } from "../../theme/FontSizes";
+import { ThemeContext } from "../../theme/theme-context";
+import { SheetHeader } from "../Components/BottomSheetHeader";
 import { Button } from "../Components/Button";
+import { InteractiveCell } from "../Components/InteractiveCell";
+import PickerComponent from "../Components/Picker";
+import { BASE_URL } from "../Config/URLs";
 const { height, width } = Dimensions.get("screen");
 
 const ForestForm = ({ navigation, route }) => {

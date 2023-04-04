@@ -1,69 +1,66 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  TextInput,
-  Alert,
-  BackHandler,
-  Dimensions,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import axios from "axios";
-import Spinner from "react-native-loading-spinner-overlay";
-import {
-  BASE_URL,
-  GET_DIVISIONS,
-  GET_DISTRICTS,
-  GET_TEHSIL,
-  GET_SITE_LIST,
-  GET_INTERVENTIONS,
-  GET_PROTECTION_LIST,
-} from "../../Config/URLs";
-import Geolocation from "@react-native-community/geolocation";
-import Feather from "react-native-vector-icons/Feather";
-import { InteractiveCell } from "../../Components/InteractiveCell";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { SheetHeader } from "../../Components/BottomSheetHeader";
-import PickerComponent from "../../Components/Picker";
-import { useUpdateEffect } from "react-use";
-import { ThemeContext } from "../../../theme/theme-context";
-import { FontSizes } from "../../../theme/FontSizes";
-import { Button } from "../../Components/Button";
-import { SelectMultiple } from "../../Components/SelectMultiple";
+import Geolocation from "@react-native-community/geolocation";
+import axios from "axios";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
-  GET_PLANT_SPECIES,
-  GET_IRRIGATION_LIST,
-  SAVE_MONITORING,
-} from "../../Config/URLs";
-import { statusCodes } from "../../Config/Constants";
-import { post } from "../../Config/api";
-import ErrorAlert from "../../Components/ErrorAlerts";
+  Alert,
+  BackHandler,
+  Dimensions,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
+import Foundation from "react-native-vector-icons/Foundation";
 import RNFS from "react-native-fs";
+import Spinner from "react-native-loading-spinner-overlay";
+import Feather from "react-native-vector-icons/Feather";
+import { useUpdateEffect } from "react-use";
+import { FontSizes } from "../../../theme/FontSizes";
+import { ThemeContext } from "../../../theme/theme-context";
+import { SheetHeader } from "../../Components/BottomSheetHeader";
+import { Button } from "../../Components/Button";
+import ErrorAlert from "../../Components/ErrorAlerts";
+import { InteractiveCell } from "../../Components/InteractiveCell";
+import PickerComponent from "../../Components/Picker";
+import { SelectMultiple } from "../../Components/SelectMultiple";
 import SuccessAlert from "../../Components/SuccessAlert";
+import { statusCodes } from "../../Config/Constants";
+import {
+  GET_DISTRICTS,
+  GET_DIVISIONS,
+  GET_INTERVENTIONS,
+  GET_IRRIGATION_LIST,
+  GET_PLANT_SPECIES,
+  GET_PROTECTION_LIST,
+  GET_SITE_LIST,
+  GET_TEHSIL,
+  SAVE_MONITORING
+} from "../../Config/URLs";
+import { post } from "../../Config/api";
+
 const { height, width } = Dimensions.get("screen");
-interface dropDownInterface {
+export interface dropDownInterface {
   id: number;
   name: string;
 }
+
 const MonitoringForm = ({ navigation, route }) => {
   const { siteImage } = route.params;
   const [convertedImage, setConnvertedImage] = useState(siteImage);
-  const baseurl = BASE_URL;
   const { dark, theme, toggle } = React.useContext(ThemeContext);
   const [isLoading, setIsLoading] = useState(false);
   const [division, setDivision] = useState("Loading Division");
@@ -71,7 +68,8 @@ const MonitoringForm = ({ navigation, route }) => {
   const [DistrictValue, setDistrictValue] = useState<dropDownInterface>(null);
   const [TehsilValue, setTehsilValue] = useState<dropDownInterface>(null);
   const [SiteTypeValue, setSiteTypeValue] = useState<dropDownInterface>(null);
-  const [intervention, setIntervention] = useState<dropDownInterface>(null);
+  const [selectedInterventions, setSelectedInterventions] = useState([]);
+
   const [sourceOofIrrigation, setSourceOfIrrigation] =
     useState<dropDownInterface>(null);
   const [protectionMechanism, setProtectionMechanism] =
@@ -81,7 +79,7 @@ const MonitoringForm = ({ navigation, route }) => {
   const [area, setArea] = useState("");
   const [UnitValue, setUnitValue] = useState(null);
   const [plantSpeciesList, setPlantSpeciesList] = useState([]);
-  const [majorIntervention, setMajorIntervention] = useState([]);
+  const [allInterventions, setAllInterventions] = useState([]);
   const [interventionIndex, setInterventionIndex] = useState(0);
   const [plantSpeciesIndex, setplantSpeciesIndex] = useState(0);
   const [lat, setLat] = React.useState(null);
@@ -136,9 +134,6 @@ const MonitoringForm = ({ navigation, route }) => {
   // variables
   const snapPoints = useMemo(() => ["35%", "50%"], []);
   // callbacks
-  const handleSheetChanges = useCallback((index) => {
-    console.log("handleSheetChanges", index);
-  }, []);
 
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition((info) => {
@@ -318,6 +313,7 @@ const MonitoringForm = ({ navigation, route }) => {
       setIsLoading(false);
     }
   };
+
   const GetIrrigationList = async () => {
     try {
       axios
@@ -352,6 +348,16 @@ const MonitoringForm = ({ navigation, route }) => {
     }
   };
 
+  const navigateToInterventions = (allInterventions) =>{
+    navigation.navigate("AddIntervention", {
+      allInterventions:allInterventions, 
+      selectedInterventions:selectedInterventions,
+      addInterventionInList: (data)=> {
+        addItemIntervention(data)
+      }
+    })
+  }
+
   const GetInterventions = async () => {
     try {
       axios
@@ -364,11 +370,8 @@ const MonitoringForm = ({ navigation, route }) => {
               name: value.text,
               id: value.intValue,
             }));
-
-            setSheetData({
-              activeIndex: "InterventionList",
-              data: updatedData,
-            });
+            setAllInterventions(updatedData);
+            navigateToInterventions(updatedData)
 
             setIsLoading(false);
           }
@@ -485,100 +488,8 @@ const MonitoringForm = ({ navigation, route }) => {
         districtId: DistrictValue.id,
         tehsilId: TehsilValue.id,
         siteId: SiteTypeValue.id,
-        interventionIds: majorIntervention.map((a) => a.id)?.toString(),
-        monitoringVM1: {
-          are_Terms_And_Conditions_Followed: true,
-          effects_on_the_forest: "string",
-          follow_up_of_the_activity: true,
-          suitabilityOfspecies: 0,
-        },
-        monitoringVM2: {
-          speciesPlanted: [
-            {
-              specie_Planted: "string",
-              no_Of_Species_Planted: 0,
-              spacing_Between_Plants: "string",
-              size_Of_Plants: "string",
-            },
-          ],
-          protection_mechanism: ["string"],
-          source_Of_Irrigation: ["string"],
-          any_other_indicator: "string",
-        },
-        monitoringVM3: {
-          establishment_of_community_based_watershed_management_plan_prepared:
-            true,
-          impact_terms_of_Environment_DRR_and_livelihoods_check_damming_and_Bio_engineering_activities:
-            "string",
-        },
-        monitoringVM4: {
-          suitability_of_the_activity_carried_out: 0,
-          any_adoptive_Research_Development_activities: "string",
-          suitable_species_raised: true,
-        },
-        monitoringVM5: {
-          design_and_suitability_of_interventions: "string",
-          effectiveness: "string",
-        },
-        monitoringVM6: {
-          landscape_approach_followed_and_choice_of_species: 0,
-          aesthetic_plantation_layout: 0,
-          suitabilityOfspecies: 0,
-        },
-        monitoringVM7: {
-          extent_of_management_and_rehabilitation_of_the_selected_sites:
-            "string",
-          range_improvement_techniques: "string",
-          grazing_browsing_control: "string",
-          grazing_systems: "string",
-          trespassing: "string",
-        },
-        monitoringVM8: {
-          process_of_distribution: "string",
-          random_verification_of_planting_stock_distribution: 0,
-          involvement_of_the_community: true,
-        },
-        monitoringVM9: {
-          mechanism_followed_development_impact_socio_economic_conditions:
-            "string",
-          physicalverification_approved_workplan: "string",
-        },
-        monitoringVM10: {
-          involvementofcommunity_NTFP_activities_contribution_local_economic_uplift:
-            true,
-          value_addition_awareness_capacity_building: true,
-          to_monitor_backward_impact_local_economy_establish_entrepreneurship:
-            "string",
-          management_plan_of_NTFP: "string",
-        },
-        monitoringVM11: {
-          area: "string",
-          layout: "string",
-          suitability: 0,
-          size_of_plantable_suitable_plants: "string",
-        },
-        monitoringVM12: {
-          health_of_plants_general_maintenance_of_the_nursery: 0,
-          weedingeffects: "string",
-        },
-        monitoringVM13: {
-          identification_nomination_community_organization_communities_resolution:
-            "string",
-          ensure_designed_bare_root_lifting_roottrimming_packaging_storage_system_Similarly_tube_plants:
-            "string",
-          followed_Instructions_PMU_vide_letter: true,
-          selection_of_suitable_tree_species: true,
-        },
-        monitoringVM14: {
-          trainingmaterial: true,
-          execution_mechanism_of_capacity_building: "string",
-          effect_and_impact: "string",
-        },
-        monitoringVM15: {
-          all_ISUs_activities_monitored_evaluated_per_their_work_plans:
-            "string",
-          impacts_changes_environment: "string",
-        },
+        interventionIds: selectedInterventions.map((a) => a.id)?.toString(),
+        interventions:selectedInterventions
       };
 
       new Promise((resolve, reject) => {
@@ -615,6 +526,7 @@ const MonitoringForm = ({ navigation, route }) => {
       });
     }
   };
+
   useUpdateEffect(() => {
     if (errorMessage !== "") {
       setErrorAlert(true);
@@ -636,6 +548,7 @@ const MonitoringForm = ({ navigation, route }) => {
     ),
     []
   );
+
   const onSelectValue = (value: any) => {
     bottomSheetRef.current.dismiss();
     switch (sheetData.activeIndex) {
@@ -660,12 +573,6 @@ const MonitoringForm = ({ navigation, route }) => {
         updatedSpecies[plantSpeciesIndex] = value;
         setPlantSpeciesList(updatedSpecies);
         setErrorMessages({ ...errorMessages, plantSpecie: "" });
-        break;
-      case "InterventionList":
-        let updatedIntervention = [...majorIntervention];
-        updatedIntervention[plantSpeciesIndex] = value;
-        setMajorIntervention(updatedIntervention);
-        setErrorMessages({ ...errorMessages, intervention: "" });
         break;
       case "IrrigationList":
         setSourceOfIrrigation(value);
@@ -694,19 +601,40 @@ const MonitoringForm = ({ navigation, route }) => {
     setPlantSpeciesList(plantSpeciesList.slice());
   };
 
-  const addItemIntervention = (() => {
-    let key = majorIntervention.length;
-    return () => {
-      majorIntervention.push({});
-      setMajorIntervention(majorIntervention.slice());
-      key++;
-    };
-  })();
+  const addItemIntervention = ((selectedIntervention) => {
+    const temp = [...selectedInterventions]
+    temp.push(selectedIntervention)
+    setSelectedInterventions([...temp])
+  });
 
-  const removeIntervention = () => {
-    majorIntervention.pop();
-    setMajorIntervention(majorIntervention.slice());
-  };
+  const interventionItem = ({ item }) => {
+    return (
+      <View style={{marginVertical:4, flexDirection:'row'}}>
+        <Text style={{
+          color:'black', 
+          flex:1,
+          textAlignVertical:'center', 
+          marginHorizontal:4}}
+        > -- {item.selectedIntervention.name}</Text>
+        
+        <TouchableOpacity
+          style={{ backgroundColor: "red", height: 36,
+          width: 36,
+          borderRadius: 10,
+          alignContent:'center',
+          justifyContent: "center",
+          alignItems: "center" }}
+          onPress={()=>{
+            setSelectedInterventions([...selectedInterventions.filter((i)=> i.id != item.id)])
+          }}
+        >
+          <Foundation name="minus" size={25} color="white" />
+        </TouchableOpacity>
+
+      </View>
+    );
+  }
+
   return (
     <BottomSheetModalProvider>
       <View style={[styles.mainContainer, { backgroundColor: theme.primary }]}>
@@ -845,18 +773,28 @@ const MonitoringForm = ({ navigation, route }) => {
               />
             </View>
             <View style={{ width: "100%" }}>
-              <SelectMultiple
-                data={majorIntervention}
-                title={"Intervention"}
-                onaddItem={() => addItemIntervention()}
-                onremoveItem={() => removeIntervention()}
-                onPressInteractiveCell={(index) => {
-                  setplantSpeciesIndex(index);
-                  setIsLoading(true);
-                  GetInterventions();
+
+            <Text style={styles.sectionText}>Interventions *</Text>
+            <FlatList
+              data={selectedInterventions}
+              renderItem={interventionItem}
+              keyExtractor={(item)=> item.id.toString()}
+              ItemSeparatorComponent={()=><View style={{
+                borderBottomColor:theme.modalBackDrop, borderBottomWidth:1, 
+              }} />}
+            />
+            <Button 
+              title="Add Intervention"
+              onPress={()=> {
+                if(allInterventions.length>0) {
+                  navigateToInterventions(allInterventions)
+      } else {
+                    setplantSpeciesIndex(0);
+                    setIsLoading(true);
+                    GetInterventions(); 
                 }}
-                errorMessage={errorMessages.intervention}
-              />
+              }
+            />
             </View>
 
             <InteractiveCell
