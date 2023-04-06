@@ -24,10 +24,10 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import Foundation from "react-native-vector-icons/Foundation";
 import RNFS from "react-native-fs";
 import Spinner from "react-native-loading-spinner-overlay";
 import Feather from "react-native-vector-icons/Feather";
+import Foundation from "react-native-vector-icons/Foundation";
 import { useUpdateEffect } from "react-use";
 import { FontSizes } from "../../../theme/FontSizes";
 import { ThemeContext } from "../../../theme/theme-context";
@@ -948,7 +948,6 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 60,
-    width: width * 0.9,
     marginVertical: 5,
     borderRadius: 10,
     borderColor: "#A8B4BC",

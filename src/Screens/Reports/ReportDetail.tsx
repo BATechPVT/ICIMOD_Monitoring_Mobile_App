@@ -1,41 +1,29 @@
-import React, {useCallback, useMemo, useRef, useEffect, useState} from 'react';
+import React from 'react';
 import {
-  View,
-  Text,
-  ImageBackground,
   Image,
-  TouchableOpacity,
-  Alert,
   ScrollView,
+  Text,
+  View
 } from 'react-native';
-import {FontSizes} from '../../../theme/FontSizes';
-import {ThemeContext} from '../../../theme/theme-context';
-import {statusCodes, dataTypes} from '../../Config/Constants';
 import {
-  ANR_LOGO,
-  APP_LOGO,
-  DISTRIBUTION_LOGO,
-  NURSERIES_LOGO,
-  PLANTATION_LOGO,
-  SOWING_LOGO,
-  FOREST_LOGO,
-  MAP_ICONN,
-} from '../../../assets/Images';
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
+  widthPercentageToDP as wp
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button} from '../../Components/Button';
-import {getData} from '../../Config/localStorage';
-import {get} from '../../Config/api';
-import {GET_LIST, BASE_URL} from '../../Config/URLs';
+import {
+  MAP_ICONN
+} from '../../../assets/Images';
+import { FontSizes } from '../../../theme/FontSizes';
+import { ThemeContext } from '../../../theme/theme-context';
+import { Button } from '../../Components/Button';
+import { BASE_URL } from '../../Config/URLs';
+
 export default function ReportDetailScreen(props: any) {
+
   const [loading, setLoading] = React.useState(true);
   const {dark, theme, toggle} = React.useContext(ThemeContext);
 
   const {item} = props.route.params;
-  console.log(item.locationPoints[0]?.lt);
+
   const rowItems = [
     {
       title: 'Site Name',
@@ -61,7 +49,6 @@ export default function ReportDetailScreen(props: any) {
       title: 'Suitable Plants',
       value: item.monitoringVM11?.size_of_plantable_suitable_plants,
     },
-
     {
       title: 'Area',
       value: item.monitoringVM11?.area,
@@ -81,10 +68,12 @@ export default function ReportDetailScreen(props: any) {
       value: item.monitoringVM14?.effect_and_impact,
     },
   ];
+
   const getRowcolor = (index: number) => {
     if (index % 2 === 0) return theme.cardRowBackGround;
-    else return theme.cardBackGround;
+    else return 'black';
   };
+  
   return (
     <View style={{flex: 1, backgroundColor: theme.primary}}>
       <Ionicons
@@ -203,13 +192,10 @@ export default function ReportDetailScreen(props: any) {
                   })}
               </ScrollView>
             </View>
-          </View>
-          <View
+
+            <View
             style={{
-              alignSelf: 'flex-end',
-              position: 'absolute',
-              bottom: 60,
-              right: 10,
+              alignSelf: 'flex-end'
             }}>
             {item.locationPoints[0]?.lg !== null &&
               item.locationPoints[0]?.lg !== undefined && (
@@ -232,6 +218,8 @@ export default function ReportDetailScreen(props: any) {
                   }
                 />
               )}
+          </View>
+
           </View>
         </ScrollView>
       </View>

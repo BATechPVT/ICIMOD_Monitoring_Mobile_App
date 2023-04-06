@@ -14,9 +14,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { REPORT_DIST_ICON, REPORT_NAME_ICON, REPORT_OCCURANCE_ICON, VIEW_REPORT_ICON } from '../../../assets/Images';
 import { FontSizes } from '../../../theme/FontSizes';
 import { ThemeContext } from '../../../theme/theme-context';
-import { get } from '../../Config/api';
 import { statusCodes } from '../../Config/Constants';
 import { BASE_URL, GET_LIST } from '../../Config/URLs';
+import { get } from '../../Config/api';
 
 export default function ReportDashBoard(props: any) {
   const [activeSections, setActiveSections] = React.useState([]);
@@ -189,7 +189,7 @@ export default function ReportDashBoard(props: any) {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              backgroundColor: 'transparent',
+              backgroundColor: 'black',
               paddingHorizontal: 12,
               paddingVertical: 8,
               borderRadius: 2,
