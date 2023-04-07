@@ -29,6 +29,7 @@ export const SelectMultiple = (props) => {
   } = props;
   const { dark, theme, toggle } = React.useContext(ThemeContext);
   const [dataSource, setDataSource] = useState([{ key: 0 }]);
+
   const ItemSeparatorView = () => {
     return (
       // FlatList Item Separator

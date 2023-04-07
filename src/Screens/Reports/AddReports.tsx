@@ -43,9 +43,7 @@ import {
   GET_DISTRICTS,
   GET_DIVISIONS,
   GET_INTERVENTIONS,
-  GET_IRRIGATION_LIST,
   GET_PLANT_SPECIES,
-  GET_PROTECTION_LIST,
   GET_SITE_LIST,
   GET_TEHSIL,
   SAVE_MONITORING
@@ -70,10 +68,6 @@ const MonitoringForm = ({ navigation, route }) => {
   const [SiteTypeValue, setSiteTypeValue] = useState<dropDownInterface>(null);
   const [selectedInterventions, setSelectedInterventions] = useState([]);
 
-  const [sourceOofIrrigation, setSourceOfIrrigation] =
-    useState<dropDownInterface>(null);
-  const [protectionMechanism, setProtectionMechanism] =
-    useState<dropDownInterface>(null);
   const [siteName, setSiteName] = useState("");
   const [village, setVillage] = useState("");
   const [area, setArea] = useState("");
@@ -93,10 +87,7 @@ const MonitoringForm = ({ navigation, route }) => {
     village: "",
     area: "",
     areaUnit: "",
-    plantSpecie: "",
-    sourceOfIrrigation: "",
-    intervention: "",
-    protectionMechanism: "",
+    plantSpecie: ""
   });
   const [loading, setLoading] = React.useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
@@ -141,6 +132,7 @@ const MonitoringForm = ({ navigation, route }) => {
       setLong(info.coords.longitude);
     });
   };
+
   const convertImageToString = () => {
     RNFS.readFile(siteImage, "base64").then((res) => {
       setConnvertedImage(res);
@@ -314,40 +306,6 @@ const MonitoringForm = ({ navigation, route }) => {
     }
   };
 
-  const GetIrrigationList = async () => {
-    try {
-      axios
-        .get(GET_IRRIGATION_LIST)
-        .then(async (response) => {
-          if (response.status === 200) {
-            const updatedData = await response.data.map((value, index) => ({
-              name: value,
-              id: index,
-            }));
-            console.log(response.data);
-            setSheetData({
-              activeIndex: "IrrigationList",
-              data: updatedData,
-            });
-
-            setIsLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsLoading(false);
-          if (error.title == undefined) {
-            setErrorMessage(error.toString());
-          } else {
-            setErrorMessage(error.title.toString());
-          }
-        });
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
   const navigateToInterventions = (allInterventions) =>{
     navigation.navigate("AddIntervention", {
       allInterventions:allInterventions, 
@@ -391,48 +349,11 @@ const MonitoringForm = ({ navigation, route }) => {
     }
   };
 
-  const GetProtectionList = async () => {
-    try {
-      axios
-        .get(GET_PROTECTION_LIST)
-        .then(async (response) => {
-          if (response.status === 200) {
-            const updatedData = await response.data.map((value, index) => ({
-              name: value,
-              id: index,
-            }));
-            console.log(response.data);
-            setSheetData({
-              activeIndex: "ProtectionList",
-              data: updatedData,
-            });
-
-            setIsLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          if (error.title == undefined) {
-            setErrorMessage(error.toString());
-          } else {
-            setErrorMessage(error.title.toString());
-          }
-          setIsLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
   useUpdateEffect(() => {
     bottomSheetRef.current.present();
   }, [sheetData]);
 
-  {
     /* NEXT Function */
-  }
-
   const NextFunction = () => {
     var error = false;
     if (DivisionValue == null) {
@@ -488,6 +409,7 @@ const MonitoringForm = ({ navigation, route }) => {
         districtId: DistrictValue.id,
         tehsilId: TehsilValue.id,
         siteId: SiteTypeValue.id,
+        siteName:siteName,
         interventionIds: selectedInterventions.map((a) => a.id)?.toString(),
         interventions:selectedInterventions
       };
@@ -495,7 +417,6 @@ const MonitoringForm = ({ navigation, route }) => {
       new Promise((resolve, reject) => {
         post(SAVE_MONITORING, body)
           .then((res) => {
-            console.log(" success ", res);
             resolve(true);
             setIsLoading(false);
             console.log("ststues code  ", res.status);
@@ -574,19 +495,12 @@ const MonitoringForm = ({ navigation, route }) => {
         setPlantSpeciesList(updatedSpecies);
         setErrorMessages({ ...errorMessages, plantSpecie: "" });
         break;
-      case "IrrigationList":
-        setSourceOfIrrigation(value);
-        setErrorMessages({ ...errorMessages, sourceOfIrrigation: "" });
-        break;
-      case "ProtectionList":
-        setProtectionMechanism(value);
-        setErrorMessages({ ...errorMessages, protectionMechanism: "" });
-        break;
 
       default:
         break;
     }
   };
+
   const addItemSpecies = (() => {
     let key = plantSpeciesList.length;
     return () => {
@@ -784,37 +698,21 @@ const MonitoringForm = ({ navigation, route }) => {
               }} />}
             />
             <Button 
+              style={{
+                marginBottom:30
+              }}
               title="Add Intervention"
               onPress={()=> {
                 if(allInterventions.length>0) {
                   navigateToInterventions(allInterventions)
-      } else {
+                } else {
                     setplantSpeciesIndex(0);
                     setIsLoading(true);
                     GetInterventions(); 
                 }}
               }
-            />
+            /> 
             </View>
-
-            <InteractiveCell
-              title="Protection Mechanism "
-              value={protectionMechanism?.name}
-              onPress={() => {
-                setIsLoading(true);
-                GetProtectionList();
-              }}
-              errorMessage={errorMessages.protectionMechanism}
-            />
-            <InteractiveCell
-              title="Source of Irrigation"
-              value={sourceOofIrrigation?.name}
-              onPress={() => {
-                setIsLoading(true);
-                GetIrrigationList();
-              }}
-              errorMessage={errorMessages.sourceOfIrrigation}
-            />
 
             <Button title="Submit" onPress={() => NextFunction()} />
 

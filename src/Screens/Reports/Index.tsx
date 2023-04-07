@@ -126,7 +126,7 @@ export default function ReportDashBoard(props: any) {
                   fontSize: FontSizes.extraSmall,
                   color: theme.textColor,
                 }}>
-                {moment.utc(section?.addedAt).fromNow()}
+                {moment(section?.addedAt).fromNow()}
               </Text>
             </View>
           </View>

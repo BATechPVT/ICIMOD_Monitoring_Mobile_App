@@ -52,23 +52,41 @@ export const MAPPING = {
   2:[//Planting multi purpose
       {
           Label:'Plants Specie',
+          Key:'specie_Planted',
           Type:VIEW_TYPE.INPUT,
           Value:''
       },
       {
           Label:'Average Plant Height',
+          Key:'spacing_Between_Plants',
           Type:VIEW_TYPE.INPUT,
+          InputType:INPUT_TYPE.NUMBER,
           Value:''
       },
       {
           Label:'Average Plant Diameter',
+          Key:'size_Of_Plants',
           Type:VIEW_TYPE.INPUT,
+          InputType:INPUT_TYPE.NUMBER,
           Value:''
       },
       {
           Label:'No of Plants',
+          Key:'no_Of_Species_Planted',
           Type:VIEW_TYPE.INPUT,
           InputType:INPUT_TYPE.NUMBER,
+          Value:''
+      },
+      {
+          Label:'Protection Mechanism',
+          Key:'protection_mechanism',
+          Type:VIEW_TYPE.INPUT,
+          Value:''
+      },
+      {
+          Label:'Source of Irrigation',
+          Key:'source_Of_Irrigation',
+          Type:VIEW_TYPE.INPUT,
           Value:''
       }
   ],
