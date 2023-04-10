@@ -20,7 +20,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
@@ -36,14 +35,12 @@ import { Button } from "../../Components/Button";
 import ErrorAlert from "../../Components/ErrorAlerts";
 import { InteractiveCell } from "../../Components/InteractiveCell";
 import PickerComponent from "../../Components/Picker";
-import { SelectMultiple } from "../../Components/SelectMultiple";
 import SuccessAlert from "../../Components/SuccessAlert";
 import { statusCodes } from "../../Config/Constants";
 import {
   GET_DISTRICTS,
   GET_DIVISIONS,
   GET_INTERVENTIONS,
-  GET_PLANT_SPECIES,
   GET_SITE_LIST,
   GET_TEHSIL,
   SAVE_MONITORING
@@ -68,7 +65,6 @@ const MonitoringForm = ({ navigation, route }) => {
   const [SiteTypeValue, setSiteTypeValue] = useState<dropDownInterface>(null);
   const [selectedInterventions, setSelectedInterventions] = useState([]);
 
-  const [siteName, setSiteName] = useState("");
   const [village, setVillage] = useState("");
   const [area, setArea] = useState("");
   const [UnitValue, setUnitValue] = useState(null);
@@ -83,11 +79,9 @@ const MonitoringForm = ({ navigation, route }) => {
     district: "",
     tehsil: "",
     siteType: "",
-    siteName: "",
     village: "",
     area: "",
-    areaUnit: "",
-    plantSpecie: ""
+    areaUnit: ""
   });
   const [loading, setLoading] = React.useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
@@ -273,39 +267,6 @@ const MonitoringForm = ({ navigation, route }) => {
     }
   };
 
-  const GetSpecies = async () => {
-    try {
-      axios
-        .get(GET_PLANT_SPECIES)
-        .then(async (response) => {
-          if (response.status === 200) {
-            const updatedData = await response.data.map((value, index) => ({
-              name: value,
-              id: index,
-            }));
-            console.log(response.data);
-            setSheetData({
-              activeIndex: "SpeciesList",
-              data: updatedData,
-            });
-            setIsLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsLoading(false);
-          if (error.title == undefined) {
-            setErrorMessage(error.toString());
-          } else {
-            setErrorMessage(error.title.toString());
-          }
-        });
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
   const navigateToInterventions = (allInterventions) =>{
     navigation.navigate("AddIntervention", {
       allInterventions:allInterventions, 
@@ -375,21 +336,6 @@ const MonitoringForm = ({ navigation, route }) => {
         ...errorMessages,
         siteType: "Please Select Site Type",
       });
-    } else if (siteName == "" || siteName == "") {
-      error = true;
-      setErrorMessages({
-        ...errorMessages,
-        siteName: "Please Enter Site Name",
-      });
-    } else if (
-      plantSpeciesList.length < 1 ||
-      plantSpeciesList[0]?.name == undefined
-    ) {
-      error = true;
-      setErrorMessages({
-        ...errorMessages,
-        plantSpecie: "Please Select Plant Specie",
-      });
     }
 
     if (!error) {
@@ -405,21 +351,24 @@ const MonitoringForm = ({ navigation, route }) => {
           },
         ],
         image: `data:image/jpg;base64,${convertedImage}`,
-        divisionId: DistrictValue.id,
+        divisionId: DivisionValue.id,
         districtId: DistrictValue.id,
         tehsilId: TehsilValue.id,
         siteId: SiteTypeValue.id,
-        siteName:siteName,
         interventionIds: selectedInterventions.map((a) => a.id)?.toString(),
         interventions:selectedInterventions
       };
+
+      console.log("body: ", JSON.stringify(body));
 
       new Promise((resolve, reject) => {
         post(SAVE_MONITORING, body)
           .then((res) => {
             resolve(true);
             setIsLoading(false);
-            console.log("ststues code  ", res.status);
+            
+            console.log("response  ", JSON.stringify(res));
+
             if (res.status == statusCodes.SUCCESS) {
               setShowSuccessAlert(true);
               setTimeout(() => {
@@ -489,30 +438,10 @@ const MonitoringForm = ({ navigation, route }) => {
         setSiteTypeValue(value);
         setErrorMessages({ ...errorMessages, siteType: "" });
         break;
-      case "SpeciesList":
-        let updatedSpecies = [...plantSpeciesList];
-        updatedSpecies[plantSpeciesIndex] = value;
-        setPlantSpeciesList(updatedSpecies);
-        setErrorMessages({ ...errorMessages, plantSpecie: "" });
-        break;
 
       default:
         break;
     }
-  };
-
-  const addItemSpecies = (() => {
-    let key = plantSpeciesList.length;
-    return () => {
-      plantSpeciesList.push({});
-      setPlantSpeciesList(plantSpeciesList.slice());
-      key++;
-    };
-  })();
-
-  const removeItemSpecies = () => {
-    plantSpeciesList.pop();
-    setPlantSpeciesList(plantSpeciesList.slice());
   };
 
   const addItemIntervention = ((selectedIntervention) => {
@@ -648,44 +577,6 @@ const MonitoringForm = ({ navigation, route }) => {
               errorMessage={errorMessages.siteType}
             />
 
-            {/* Site Name */}
-            <View>
-              <Text style={styles.sectionText}>Site Name *</Text>
-              <TextInput
-                style={styles.button}
-                placeholder={"Enter Site Name"}
-                placeholderTextColor="#777"
-                value={siteName}
-                onChangeText={(siteName) => {
-                  setSiteName(siteName);
-                  setErrorMessages({
-                    ...errorMessages,
-                    siteName: "",
-                  });
-                }}
-              />
-              {errorMessages.siteName != "" && (
-                <Text
-                  style={{ padding: 2, paddingHorizontal: 8, color: "red" }}
-                >
-                  {errorMessages.siteName}
-                </Text>
-              )}
-            </View>
-            <View style={{ width: "100%" }}>
-              <SelectMultiple
-                data={plantSpeciesList}
-                title={"Plant Species"}
-                onaddItem={() => addItemSpecies()}
-                onremoveItem={() => removeItemSpecies()}
-                onPressInteractiveCell={(index) => {
-                  setplantSpeciesIndex(index);
-                  setIsLoading(true);
-                  GetSpecies();
-                }}
-                errorMessage={errorMessages.plantSpecie}
-              />
-            </View>
             <View style={{ width: "100%" }}>
 
             <Text style={styles.sectionText}>Interventions *</Text>
@@ -716,28 +607,6 @@ const MonitoringForm = ({ navigation, route }) => {
 
             <Button title="Submit" onPress={() => NextFunction()} />
 
-            {/* <View style={styles.Container}>
-              <View>
-                <Text style={styles.containerHeading}>Add Site's Location</Text>
-                <Text style={styles.requiredText}>
-                  Please press "Select Point" Button below to mark a point.
-                </Text>
-                <Text style={styles.requiredText}>
-                  Please add a point after 30 seconds.
-                </Text>
-              </View>
-              <Button
-                onPress={() => counter()}
-                title=" Select Point"
-                style={{
-                  height: 60,
-                  width: 160,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: 10,
-                }}
-              />
-            </View> */}
             <Spinner
               visible={isLoading}
               textContent={"Loading..."}

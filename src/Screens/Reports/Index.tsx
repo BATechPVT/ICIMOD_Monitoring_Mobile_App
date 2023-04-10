@@ -11,7 +11,7 @@ import {
 } from 'react-native-responsive-screen';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { REPORT_DIST_ICON, REPORT_NAME_ICON, REPORT_OCCURANCE_ICON, VIEW_REPORT_ICON } from '../../../assets/Images';
+import { REPORT_DIST_ICON, REPORT_NAME_ICON, REPORT_OCCURANCE_ICON } from '../../../assets/Images';
 import { FontSizes } from '../../../theme/FontSizes';
 import { ThemeContext } from '../../../theme/theme-context';
 import { statusCodes } from '../../Config/Constants';
@@ -29,15 +29,14 @@ export default function ReportDashBoard(props: any) {
   }, []);
 
   const fetchData = async () => {
-    console.log(' hy ');
     setLoading(true);
     const apiResponse = await get(GET_LIST);
-    console.log(' status ', apiResponse.status);
     if (apiResponse.status === statusCodes.SUCCESS) {
       setAllReports(apiResponse.data);
     } 
     setLoading(false);
   };
+
   const _renderSectionTitle = (section: any, isActive: boolean) => {
     return null;
     return (
@@ -184,42 +183,13 @@ export default function ReportDashBoard(props: any) {
             </View>
             <Text style={{flex: 1}}>{': ' + section.createBy}</Text>
           </View>
+
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
               backgroundColor: 'black',
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 2,
-              marginVertical: 3,
-              width: '100%',
-            }}>
-            <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
-              <Image
-                source={VIEW_REPORT_ICON}
-                resizeMode="contain"
-                style={{height: 20, width: 20, tintColor: theme.secondary}}
-              />
-              <Text style={{paddingLeft: 12, fontSize: FontSizes.extraSmall}}>
-                Status
-              </Text>
-            </View>
-            <Text style={{flex: 1}}>
-              {section.approvalStatus == 0
-                ? ': Pending'
-                : section.approvalStatus == 2
-                ? ': Approved'
-                : ': Rejected'}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: theme.cardRowBackGround,
               paddingHorizontal: 12,
               paddingVertical: 8,
               borderRadius: 2,
