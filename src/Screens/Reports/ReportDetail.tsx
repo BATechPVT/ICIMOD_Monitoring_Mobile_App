@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image,
   ScrollView,
+  StyleSheet,
   Text,
   View
 } from 'react-native';
@@ -15,6 +16,7 @@ import {
 import { FontSizes } from '../../../theme/FontSizes';
 import { ThemeContext } from '../../../theme/theme-context';
 import { Button } from '../../Components/Button';
+import { MAPPING } from '../../Config/Constants';
 import { BASE_URL } from '../../Config/URLs';
 
 export default function ReportDetailScreen(props: any) {
@@ -26,53 +28,144 @@ export default function ReportDetailScreen(props: any) {
 
   const rowItems = [
     {
+      title: 'District',
+      value: item.district,
+    },
+    {
+      title: 'Tehsil',
+      value: item.tehsil,
+    },
+    {
       title: 'Site Name',
       value: item.site,
-    },
-    {
-      title: 'Protection Mechanism',
-      value: item.monitoringVM2?.protection_mechanism?.toString(),
-    },
-    {
-      title: 'Source Of Irrigation',
-      value: item.monitoringVM2?.source_Of_Irrigation?.toString(),
-    },
-    {
-      title: 'Effectiveness',
-      value: item.monitoringVM5?.effectiveness,
-    },
-    {
-      title: 'Suitability Of Species',
-      value: item.monitoringVM6?.suitabilityOfspecies,
-    },
-    {
-      title: 'Suitable Plants',
-      value: item.monitoringVM11?.size_of_plantable_suitable_plants,
-    },
-    {
-      title: 'Area',
-      value: item.monitoringVM11?.area,
-    },
-
-    {
-      title: 'Layout',
-      value: item.monitoringVM11?.layout,
-    },
-    {
-      title: 'Weeding Effects',
-      value: item.monitoringVM12?.weedingeffects,
-    },
-
-    {
-      title: 'Effects',
-      value: item.monitoringVM14?.effect_and_impact,
-    },
+    }
   ];
 
   const getRowcolor = (index: number) => {
     if (index % 2 === 0) return theme.cardRowBackGround;
     else return 'black';
   };
+
+  const showInterventionData = () => {
+
+    let view: Array<Element> = [];
+    view.push(<Text style={styles.sectionText, {width:'100%', color:'black'}}>Interventions</Text>)
+
+    let mapping;
+
+    if(item?.monitoringVM1!=null) {
+      mapping = MAPPING[1]
+    } else if(item?.monitoringVM2!=null) {
+      mapping = MAPPING[2]
+    } else if(item?.monitoringVM3!=null) {
+      mapping = MAPPING[3]
+    } else if(item?.monitoringVM4!=null) {
+      mapping = MAPPING[4]
+    } else if(item?.monitoringVM5!=null) {
+      mapping = MAPPING[5]
+    } else if(item?.monitoringVM6!=null) {
+      mapping = MAPPING[6]
+    } else if(item?.monitoringVM7!=null) {
+      mapping = MAPPING[7]
+    } else if(item?.monitoringVM8!=null) {
+      mapping = MAPPING[8]
+    } else if(item?.monitoringVM9!=null) {
+      mapping = MAPPING[9]
+    } else if(item?.monitoringVM10!=null) {
+      mapping = MAPPING[10]
+    } else if(item?.monitoringVM11!=null) {
+      mapping = MAPPING[11]
+    } else if(item?.monitoringVM12!=null) {
+      mapping = MAPPING[12]
+    } else if(item?.monitoringVM13!=null) {
+      mapping = MAPPING[13]
+    } else if(item?.monitoringVM14!=null) {
+      mapping = MAPPING[14]
+    } else if(item?.monitoringVM15!=null) {
+      mapping = MAPPING[15]
+    }
+
+    if(mapping!=null || mapping != undefined){
+      const keys = Object.keys(item.monitoringVM1);
+      const values = Object.values(item.monitoringVM1);
+
+      keys.forEach((key, index) => {
+        
+        const label = mapping.find((item)=>item.Key==key)  
+        
+        view.push (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 2,
+              marginVertical: 3,
+              width: wp(80),
+            }}>
+            <Text
+              style={{
+                alignSelf: 'flex-start',
+                textAlign: 'left',
+                width: '50%',
+                color:'black',
+                fontSize: FontSizes.small,
+              }}>
+              {label?.Label}
+            </Text>
+            <Text
+              style={{
+                alignSelf: 'flex-start',
+                textAlign: 'center',
+                width: '10%',
+                color:'black',
+              }}>
+              {':'}
+            </Text>
+
+            <Text
+              style={{
+                alignSelf: 'flex-start',
+                width: '40%',
+                fontSize: FontSizes.small,
+                color:'black',
+              }}>
+              {values[index]}
+            </Text>
+          </View>
+        )
+      });
+    } else {
+      view.push (
+        <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 2,
+              marginVertical: 3,
+              width: wp(80),
+            }}>
+            <Text
+              style={{
+                alignSelf: 'flex-start',
+                textAlign: 'left',
+                width: '50%',
+                color:'black',
+                fontSize: FontSizes.small,
+              }}>
+                No intervention found for this record.
+            </Text>
+          </View>
+      )
+    }
+      
+    return view
+  }
   
   return (
     <View style={{flex: 1, backgroundColor: theme.primary}}>
@@ -140,8 +233,7 @@ export default function ReportDetailScreen(props: any) {
                 width: wp(80),
                 alignItems: 'center',
               }}>
-              <ScrollView>
-                {rowItems !== null &&
+              {rowItems !== null &&
                   rowItems.map((value: any, index: number) => {
                     return (
                       <View
@@ -190,11 +282,12 @@ export default function ReportDetailScreen(props: any) {
                       </View>
                     );
                   })}
-              </ScrollView>
+              
+              {showInterventionData()}
+
             </View>
 
-            <View
-            style={{
+            <View style={{
               alignSelf: 'flex-end'
             }}>
             {item.locationPoints[0]?.lg !== null &&
@@ -226,3 +319,11 @@ export default function ReportDetailScreen(props: any) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  sectionText: {
+    color: "black",
+    fontFamily: "Montserrat-SemiBold",
+    paddingVertical: 5,
+  },
+})
