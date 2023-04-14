@@ -49,50 +49,67 @@ export default function ReportDetailScreen(props: any) {
   const showInterventionData = () => {
 
     let view: Array<Element> = [];
-    view.push(<Text style={styles.sectionText, {width:'100%', color:'black'}}>Interventions</Text>)
+    view.push(<Text style={[styles.sectionText, {width:'100%', color:'black'}]}>Interventions</Text>)
 
     let mapping;
+    let mappingValues;
 
     if(item?.monitoringVM1!=null) {
       mapping = MAPPING[1]
+      mappingValues=item?.monitoringVM1
     } else if(item?.monitoringVM2!=null) {
       mapping = MAPPING[2]
+      mappingValues=item?.monitoringVM2
     } else if(item?.monitoringVM3!=null) {
       mapping = MAPPING[3]
+      mappingValues=item?.monitoringVM3
     } else if(item?.monitoringVM4!=null) {
       mapping = MAPPING[4]
+      mappingValues=item?.monitoringVM4
     } else if(item?.monitoringVM5!=null) {
       mapping = MAPPING[5]
+      mappingValues=item?.monitoringVM5
     } else if(item?.monitoringVM6!=null) {
       mapping = MAPPING[6]
+      mappingValues=item?.monitoringVM6
     } else if(item?.monitoringVM7!=null) {
       mapping = MAPPING[7]
+      mappingValues=item?.monitoringVM7
     } else if(item?.monitoringVM8!=null) {
       mapping = MAPPING[8]
+      mappingValues=item?.monitoringVM8
     } else if(item?.monitoringVM9!=null) {
       mapping = MAPPING[9]
+      mappingValues=item?.monitoringVM9
     } else if(item?.monitoringVM10!=null) {
       mapping = MAPPING[10]
+      mappingValues=item?.monitoringVM10
     } else if(item?.monitoringVM11!=null) {
       mapping = MAPPING[11]
+      mappingValues=item?.monitoringVM11
     } else if(item?.monitoringVM12!=null) {
       mapping = MAPPING[12]
+      mappingValues=item?.monitoringVM12
     } else if(item?.monitoringVM13!=null) {
       mapping = MAPPING[13]
+      mappingValues=item?.monitoringVM13
     } else if(item?.monitoringVM14!=null) {
       mapping = MAPPING[14]
+      mappingValues=item?.monitoringVM14
     } else if(item?.monitoringVM15!=null) {
       mapping = MAPPING[15]
+      mappingValues=item?.monitoringVM15
     }
 
     if(mapping!=null || mapping != undefined){
-      const keys = Object.keys(item.monitoringVM1);
-      const values = Object.values(item.monitoringVM1);
+      const keys = Object.keys(mappingValues.data);
+      const values = Object.values(mappingValues.data);
 
       keys.forEach((key, index) => {
         
         const label = mapping.find((item)=>item.Key==key)  
-        
+        if(label){
+          
         view.push (
           <View
             style={{
@@ -132,10 +149,12 @@ export default function ReportDetailScreen(props: any) {
                 fontSize: FontSizes.small,
                 color:'black',
               }}>
-              {values[index]}
+                {/* I am sorry for the stupid code, however I can't think of anyother elegant solution at the moment! */}
+              {values[index] == false ? 'No': values[index] == true? 'Yes': values[index]}
             </Text>
           </View>
         )
+            }
       });
     } else {
       view.push (
